@@ -1,0 +1,1 @@
+# stremio-resolution-seeders-addon
