@@ -12,15 +12,19 @@ const manifest = {
 };
 
 const builder = new addonBuilder(manifest);
+
+// List of external stream-endpoints (adjust or load via env)
 const EXTERNAL_STREAM_SOURCES = [
   'https://api.strem.io/catalog/torrentio/stream',
   'https://api.strem.io/catalog/mediafusion/stream',
 ];
 
 function parseResolution(stream) {
+  // Prefer explicit field
   if (stream.info && stream.info.videoResolution) {
     return stream.info.videoResolution.toUpperCase();
   }
+  // Fallback regex
   const match = stream.title.match(/(4K|\d{3,4}P)/i);
   return match ? match[1].toUpperCase() : 'Unknown';
 }
@@ -33,16 +37,19 @@ builder.defineStreamHandler(async ({ type, id }) => {
       const res = await fetch(url);
       if (!res.ok) return;
       const json = await res.json();
-      if (Array.isArray(json.streams)) collected.push(...json.streams);
+      if (Array.isArray(json.streams)) {
+        collected.push(...json.streams);
+      }
     } catch (e) {
-      console.warn(`Failed to fetch from ${endpoint}:`, e.message);
+      console.warn(`Failed to fetch from ${endpoint}: ${e.message}`);
     }
   }));
 
   const streams = collected.map(stream => {
     const resolution = parseResolution(stream);
     const seeders = stream.info && (stream.info.seeds || stream.info.seeders)
-      ? (stream.info.seeds || stream.info.seeders) : 0;
+      ? (stream.info.seeds || stream.info.seeders)
+      : 0;
     const connection = seeders > 1 ? 'Available' : 'Unavailable';
     return {
       title: `Resolution: ${resolution}\nConnection: ${connection}`,
@@ -53,4 +60,9 @@ builder.defineStreamHandler(async ({ type, id }) => {
   return { streams };
 });
 
-module.exports = builder.getInterface();
+const addonInterface = builder.getInterface();
+
+module.exports = (req, res) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  return addonInterface(req, res);
+};
