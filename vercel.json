@@ -5,6 +5,7 @@
   ],
   "routes": [
     { "src": "/manifest.json", "dest": "/addon.js" },
-    { "src": "/(.*)",       "dest": "/addon.js" }
+    { "src": "/stream",        "dest": "/addon.js" },
+    { "src": "/(.*)",          "dest": "/addon.js" }
   ]
 }
