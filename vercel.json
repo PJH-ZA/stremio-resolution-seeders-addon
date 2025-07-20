@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "addon.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/manifest.json", "dest": "/addon.js" },
+    { "src": "/(.*)",       "dest": "/addon.js" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "stremio-resolution-seeders-addon",
+  "version": "1.0.0",
+  "main": "addon.js",
+  "scripts": {
+    "start": "node addon.js"
+  },
+  "dependencies": {
+    "stremio-addon-sdk": "^1.0.0",
+    "node-fetch": "^2.6.7"
+  }
+}
